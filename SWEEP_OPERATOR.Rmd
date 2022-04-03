@@ -1,0 +1,166 @@
+---
+title: 'SWEEP Operator'
+author: "Nicholus Tint Zaw"
+fontsize: 12pt
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+header-includes: \usepackage{pdfpages}
+geometry: margin=0.5in
+fig_crop: no
+---
+
+```{r, echo = F, message = F, warning = F}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(kableExtra)
+library(fastmatrix)
+library(tidyverse)
+
+```
+
+The sweep operator is part of the linear vs. non-linear model day one lecture topics, and this rmd file was created for self-learning purposes. 
+
+
+
+## Data Processing & Regression model
+
+```{r}
+# load the dataset 
+df <- read.csv("Chicago_Taxi_Trip.csv")
+
+df <- df %>%
+  mutate(Payment_Method_Cash = ifelse(Payment_Method == "Cash", 1, 0), 
+         Payment_Method_Credit_Card = ifelse(Payment_Method == "Credit Card", 1, 0), 
+         intercept = 1)
+
+reg <- lm(Trip_Payment ~ Payment_Method_Cash + Payment_Method_Credit_Card + 
+            Trip_Minutes + Trip_Miles, df)
+summary(reg)
+
+```
+
+
+## Practice SWEEP Code 
+
+```{r}
+# Predictors and Outcome combined matrix 
+z <- df %>%
+  dplyr::select(intercept, Payment_Method_Cash, Payment_Method_Credit_Card, 
+                Trip_Minutes, Trip_Miles, Trip_Payment) %>%
+  relocate(intercept, Payment_Method_Cash, Payment_Method_Credit_Card, 
+           Trip_Minutes, Trip_Miles, Trip_Payment)
+
+zt <- t(z)
+Z <- zt %*% as.matrix(z)
+```
+
+
+```{r, error = TRUE}
+# sweep one row by each time using sweep.operator function from fastmatrix pkg
+# Intercept 
+k = c(1)
+z <- sweep.operator(as.matrix(Z), k = k)
+
+# Payment_Method_Cash
+k = c(1, 2)
+z <- sweep.operator(as.matrix(Z), k = k)
+
+print(0.000000e+00)
+
+# Payment_Method_Credit_Card
+k = c(1, 2, 3)
+z <- sweep.operator(as.matrix(Z), k = k) # result error because sweep operator row was 0
+
+# Trip_Minutes
+k = c(1, 2, 4)
+z <- sweep.operator(as.matrix(Z), k = k)
+
+# Trip_Miles
+k = c(1, 2, 4, 5)
+z <- sweep.operator(as.matrix(Z), k = k)
+```
+
+
+
+```{r}
+# customized function
+# ref: https://www.stat.cmu.edu/~brian/711/week06/linreg-1.pdf
+
+sweepk <- function(A,k) {
+  
+  n <- dim(A)[1]
+  if (n!=dim(A)[2]) stop("A not square!")
+  
+  b <- abs(A[k,k])
+  if(b==0) stop("Can’t sweep on zero!")
+  
+  A[k,] <- A[k,]/b
+  
+  A[,k] <- A[,k]/b
+  
+  others <- (1:n)[-k]
+  
+  for (i in others) {
+    for (j in others) {
+      A[i,j] <- A[i,j] - A[i,k]*A[k,j]*b
+      }
+  }
+  
+  A[k,k] <- -1/b
+  
+  return(A)
+  
+}
+
+```
+
+
+
+```{r, error = TRUE}
+
+# step-by-step sweep operation
+sweep_mat_1 <- sweepk(as.matrix(Z), 1)
+sweep_mat_2 <- sweepk(as.matrix(sweep_mat_1), 2)
+sweep_mat_3 <- sweepk(as.matrix(sweep_mat_2), 3) # will get the error message as the operator value was zero
+sweep_mat_4 <- sweepk(as.matrix(sweep_mat_2), 4)
+sweep_mat_5 <- sweepk(as.matrix(sweep_mat_4), 5)
+
+```
+
+
+
+```{r}
+# looping for all predictors 
+p <- nrow(Z) - 1
+sweep_mat <- Z
+
+for (x in 1:p){
+  print(x) # loop check
+  if(sweep_mat[x,x] != 0){
+    print(sweep_mat[x,x]) # condition check
+    sweep_mat <- sweepk(as.matrix(sweep_mat), x)
+  }
+  
+}
+
+
+```
+
+
+```{r}
+#landscape(knitr::kable(head(sweep_mat), "latex"))
+# ref: https://stackoverflow.com/questions/32265676/longtable-in-a-knitr-pdf-document-using-xtable-or-kable
+kable(sweep_mat, "latex", longtable = T, booktabs = T) %>%
+  kable_styling(latex_options = c("repeat_header"), font_size = 9) %>%
+  landscape()
+
+```
+
+
+
+

@@ -1,0 +1,21 @@
+Trip_ID,Trip_Start_Date,Trip_Start_Time,Pickup_Area,Dropoff_Area,Trip_Minutes,Trip_Miles,Payment_Method,Trip_Payment
+1,1/2/2016,4:15:00 PM,Loop,Airport,28,11,Cash,29.75
+2,1/2/2016,4:15:00 PM,Loop,Airport,34,17.8,Cash,44.75
+3,1/6/2016,6:15:00 PM,Loop,Airport,28,17.5,Credit Card,52.8
+4,1/8/2016,4:30:00 PM,Loop,Airport,45,17.4,Credit Card,51.9
+5,1/8/2016,6:30:00 PM,Loop,Airport,33,18.6,Credit Card,51.5
+6,1/11/2016,4:15:00 PM,Loop,Airport,38,18.1,Cash,44.75
+7,1/12/2016,4:15:00 PM,Loop,Airport,39,18.1,Credit Card,54
+8,1/13/2016,4:30:00 PM,Loop,Airport,39,17.6,Credit Card,53.5
+9,1/15/2016,4:15:00 PM,Loop,Airport,54,17.4,Cash,43.75
+10,1/15/2016,4:30:00 PM,Loop,Airport,37,11.6,Cash,31.25
+11,1/15/2016,4:30:00 PM,Loop,Airport,51,18.5,Cash,46.5
+12,1/18/2016,5:15:00 PM,Loop,Airport,44,18.72,Cash,47
+13,1/18/2016,5:15:00 PM,Loop,Airport,35,17.9,Credit Card,52.5
+14,1/18/2016,6:30:00 PM,Loop,Airport,24,17.2,Cash,42.75
+15,1/20/2016,4:15:00 PM,Loop,Airport,38,18.3,Credit Card,50.75
+16,1/20/2016,8:15:00 PM,Loop,Airport,24,12.4,Credit Card,39.6
+27,1/20/2016,10:45:00 PM,Loop,Airport,32,20.2,Cash,50.5
+18,1/21/2016,4:15:00 PM,Loop,Airport,46,11,Credit Card,38.75
+19,1/21/2016,5:00:00 PM,Loop,Airport,52,17.3,Credit Card,53.4
+20,1/21/2016,8:30:00 PM,Loop,Airport,25,12.9,Cash,32.75
